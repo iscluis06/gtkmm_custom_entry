@@ -1,0 +1,63 @@
+#ifndef GTKMM_CUSTOM_ENTRY_GTKMMCUSTOMENTRY_H
+#define GTKMM_CUSTOM_ENTRY_GTKMMCUSTOMENTRY_H
+
+#include <gtkmm/entry.h>
+
+#define GTKMMCUSTOMENTRY_VERSION "@PROJECT_VERSION@"
+
+/**
+ * Simple custom entry widget, to validate and disallow introducing specific characters.
+ * If default constructor is being, it will be set automatically to only allow introducing characters.
+ * If min, max constructor use it will be set to only allow digits on given range.
+ * By default, both constructors set the change signal.
+ */
+class GTKMMCustomEntry: public Gtk::Entry{
+public:
+    /**
+     * Default constructor, it sets the entry to only allow characters, no special chars or symbols.
+     */
+    GTKMMCustomEntry();
+    /**
+     * Constructor that sets the entry to only allow numerics.<br>
+     * It will use a default placeholder with the values of 'min'-'max' and length to the 'max' number character length.
+     * @param min Minimum integer value
+     * @param max Maximum integer value
+     */
+    GTKMMCustomEntry(int min, int max);
+    /**
+     * Return the current library version
+     * @return Current library version
+     */
+    std::string GetVersion();
+private:
+    /**
+     * Private enum class to differentiate between numeric and characters.
+     */
+    enum class Type {Characters, Numeric};
+    /**
+     * Handler for the change signal of entry, it automatically sets the calling for IdleAction method.
+     */
+    void ChangeAction();
+    /**
+     * IdleAction handler that changes the entry text if not complies with given conditions.
+     */
+    void IdleAction();
+    /**
+     * Current type of entry
+     */
+    Type current_type_;
+    /**
+     * Helper property to avoid multiple calls into change handler
+     */
+    bool is_updating_ = false;
+    /**
+     * Max value for numeric entry
+     */
+    int max_ = -1;
+    /**
+     * Min value for numeric entry
+     */
+    int min_ = -1;
+};
+
+#endif // GTKMM_CUSTOM_ENTRY_GTKMMCUSTOMENTRY_H
